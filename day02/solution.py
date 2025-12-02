@@ -9,26 +9,33 @@ def load_ranges() -> list[tuple[int, int]]:
     ]
 
 
-def _has_repeats_exact_half(i: int) -> bool:
-    s = str(i)
-    n = len(s)
+# generate possible chunks between ranges instead of checking if individual number
+def _generate_repeating_numbers(start: int, end: int, part_one: bool = False) -> int:
+    results = set()
 
-    if n % 2 != 0:
-        return False
-    mid = n // 2
-    chunk = s[:mid]
-    return chunk * 2 == s
+    min_len = len(str(start))
+    max_len = len(str(end))
 
+    for length in range(min_len, max_len + 1):
+        if part_one:
+            if length % 2 != 0:
+                continue
+            chunk_sizes = [length // 2]
+        else:
+            chunk_sizes = [c for c in range(1, length // 2 + 1) if length % c == 0]
 
-def _has_repeats_any_chunk(i: int) -> bool:
-    s = str(i)
-    n = len(s)
-    for size in range(1, n // 2 + 1):
-        if n % size == 0:
-            chunk = s[:size]
-            if chunk * (n // size) == s:
-                return True
-    return False
+        for chunk_size in chunk_sizes:
+            repeats = length // chunk_size
+
+            start_chunk = 10 ** (chunk_size - 1)
+            end_chunk = 10 ** chunk_size
+            for c in range(start_chunk, end_chunk):
+                chunk = str(c)
+                num = int(chunk * repeats)
+                if start <= num <= end:
+                    results.add(num)
+
+    return sum(results)
 
 
 class Main:
@@ -36,15 +43,7 @@ class Main:
         self.ranges = load_ranges()
 
     def part_one(self) -> int:
-        return sum(
-            i for first, last in self.ranges
-            for i in range(first, last + 1)
-            if _has_repeats_exact_half(i)
-        )
+        return sum(_generate_repeating_numbers(start, end, part_one=True) for start, end in self.ranges)
 
     def part_two(self) -> int:
-        return sum(
-            i for first, last in self.ranges
-            for i in range(first, last + 1)
-            if _has_repeats_any_chunk(i)
-        )
+        return sum(_generate_repeating_numbers(start, end) for start, end in self.ranges)
