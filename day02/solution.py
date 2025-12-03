@@ -6,7 +6,7 @@ def load_ranges() -> list[tuple[int, int]]:
         ]
 
 
-# generate possible chunks between ranges instead of checking if individual number
+# generate possible chunks between ranges instead of checking each individual number is invalid
 def _generate_repeating_numbers(start: int, end: int, part_one: bool = False) -> int:
     results = set()
 
