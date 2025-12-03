@@ -1,12 +1,9 @@
-from pathlib import Path
-
-
 def load_ranges() -> list[tuple[int, int]]:
-    path = Path(__file__).parent.parent / "input" / "day2.txt"
-    return [
-        tuple(map(int, product_range.split("-")))
-        for product_range in Path(path).read_text().strip().split(",")
-    ]
+    with open("input/day2.txt") as f:
+        return [
+            tuple(map(int, r.split("-")))
+            for r in f.read().strip().split(",")
+        ]
 
 
 # generate possible chunks between ranges instead of checking if individual number

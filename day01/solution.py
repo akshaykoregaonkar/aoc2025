@@ -1,9 +1,6 @@
-from pathlib import Path
-
 
 def _load_instructions():
-    input_file = Path(__file__).parent.parent / "input" / "day1.txt"
-    with open(input_file) as f:
+    with open("input/day1.txt") as f:
         return [(line[0], int(line[1:])) for line in map(str.strip, f) if line]
 
 
