@@ -1,3 +1,4 @@
+from math import prod
 # idea is to split numbers when all columns have a space at an index
 def _space_by_columns(rows):
     result = []
@@ -27,7 +28,7 @@ def _cephalopod_col(col):
 
     output = []
     for i in range(max_len):
-        digits = [num[i] for num in col if i < len(num)]
+        digits = [num[i] for num in col]
         output.append(int("".join(digits)))
     return output
 
@@ -37,26 +38,19 @@ class Main:
         self.cols, self.operations = _load_data()
 
     @staticmethod
-    def _apply(op, nums):
-        if op == "*":
-            result = 1
-            for n in nums:
-                result *= n
-            return result
-        return sum(nums)
+    def _apply(nums, op):
+        return prod(nums) if op == "*" else sum(nums)
 
     def part_one(self):
         total = 0
-        ops, cols = self.operations, self.cols
-        for op, col in zip(ops, cols):
-            nums = [int(x) for x in col]
-            total += self._apply(op, nums)
+        for op, col in zip(self.operations, self.cols):
+            nums = list(map(int, col))
+            total += self._apply(nums, op)
         return total
 
     def part_two(self):
         total = 0
-        ops, cols = self.operations, self.cols
-        for op, col in zip(ops, cols):
+        for op, col in zip(self.operations, self.cols):
             nums = _cephalopod_col(col)
-            total += self._apply(op, nums)
+            total += self._apply(nums, op)
         return total
