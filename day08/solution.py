@@ -1,7 +1,6 @@
-from collections import defaultdict
 from math import prod
 from utils.union_find import UnionFind
-
+import heapq
 
 def _load_points():
     with open('input/day8.txt') as f:
@@ -11,46 +10,39 @@ def _straight_line_dist(a, b):
     return (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2
 
 
-def _sort_by_distance(points):
+def _pairwise_dist(points):
     n = len(points)
-
-    pairs = [
-        (i, j, _straight_line_dist(points[i], points[j]))
-        for i in range(n) for j in range(i + 1, n)
-    ]
-    pairs.sort(key=lambda x: x[2])
-    return pairs
+    for i in range(n):
+        for j in range(i + 1, n):
+            yield _straight_line_dist(points[i], points[j]), i, j
 
 
 class Main:
     def __init__(self):
         self._points = _load_points()
-        self._points_sorted = _sort_by_distance(self._points)
+        self._n = len(self._points)
 
-    def part_one(self, num_of_connections: int) -> int:
-        uf = UnionFind(range(len(self._points)))
+    def part_one(self, k):
+        uf = UnionFind(range(self._n))
+        top3_heap = []
 
-        for p1, p2, _ in self._points_sorted[:num_of_connections]:
-            uf.union(p1, p2)
-
-        circuits = self._get_disjoint_sets(uf)
-
-        top_3_circuit_sizes = sorted((len(s) for s in circuits.values()), reverse=True)[:3]
-
-        return prod(top_3_circuit_sizes)
+        for d, i, j in heapq.nsmallest(k, _pairwise_dist(self._points)):
+            if uf.union(i, j):
+                size = uf.size[uf.find(i)]
+                if len(top3_heap) < 3:
+                    heapq.heappush(top3_heap, size)
+                elif size > top3_heap[0]:
+                    heapq.heapreplace(top3_heap, size)
+        return prod(top3_heap)
 
     def part_two(self):
         uf = UnionFind(range(len(self._points)))
-        for p1, p2, _ in self._points_sorted:
-            uf.union(p1, p2)
-            if uf.count == 1:
-                return self._points[p1][0] * self._points[p2][0]
-        return -1
 
-    def _get_disjoint_sets(self, uf):
-        circuits = defaultdict(list)
-        for i in range(len(self._points)):
-            root = uf.find(i)
-            circuits[root].append(i)
-        return circuits
+        edges_heap = list(_pairwise_dist(self._points))
+        heapq.heapify(edges_heap)
 
+        while uf.count > 1:
+            d, i, j = heapq.heappop(edges_heap)
+            uf.union(i, j)
+
+        return self._points[i][0] * self._points[j][0]

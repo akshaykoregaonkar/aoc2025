@@ -52,7 +52,7 @@ def main():
 
     day08 = Day08()
     print("Day 8")
-    print("part 1:", day08.part_one(num_of_connections=1000))
+    print("part 1:", day08.part_one(k=1000))
     print("part 2:", day08.part_two())
 if __name__ == "__main__":
     main()
