@@ -6,6 +6,7 @@ from day05.solution import Main as Day05
 from day06.solution import Main as Day06
 from day07.solution import Main as Day07
 from day08.solution import Main as Day08
+from day09.solution import Main as Day09
 
 def main():
     day01 = Day01()
@@ -54,5 +55,12 @@ def main():
     print("Day 8")
     print("part 1:", day08.part_one(k=1000))
     print("part 2:", day08.part_two())
+    print("------------")
+
+    day09 = Day09()
+    print("Day 9")
+    print("part 1:", day09.part_one())
+    print("part 2:", day09.part_two())
+
 if __name__ == "__main__":
     main()
