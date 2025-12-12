@@ -63,7 +63,7 @@ def _shortest_joltage_presses(joltage, buttons):
     prob += pulp.lpSum(x)
 
     for i in range(n_counters):
-        buttons_that_jolt = [j for j in range(n_buttons) if i in buttons]
+        buttons_that_jolt = [j for j in range(n_buttons) if i in buttons[j]]
         num_of_presses = pulp.lpSum(x[j] for j in buttons_that_jolt)
         prob += num_of_presses == joltage[i]
 
